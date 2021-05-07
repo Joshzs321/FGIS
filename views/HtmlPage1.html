@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="author" content="WHU SGG Cesium Squad">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta name="description" content="First Interface ">
+  <meta name="cesium-sandcastle-labels" content="Showcases, DataSources">
+  <title>FGIS-三维飞行演示</title>
+  <script src="/myCesiumNew/Build/CesiumUnminified/Cesium.js"></script>
+  <!-- <script src="/myCesium/Source/Cesium.js"></script> -->
+  <script type="text/javascript" src="/myCesium/Apps/Sandcastle/Sandcastle-header.js"></script>
+  <link rel="stylesheet" href="/stylesheets/bootstrap.css">
+  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+
+  <link rel="stylesheet" href="/stylesheets/style1.css">
+  <!-- <script src="/javascripts/leaflet-src.js"></script> -->
+  <script src="/javascripts/jquery.min.js"></script>
+  <script src="/javascripts/popper.min.js"></script>
+  <script type="text/javascript" src="/myCesium/ThirdParty/requirejs-2.1.20/require.js"></script>
+  <script type="text/javascript" src="/myCesium/Apps/Sandcastle/customize/flightDemo20180308/jquery-2.1.4.min.js">
+  </script>
+  <script src="/javascripts/bootstrap.min.js"></script>
+  <!-- <script src="https://cdn.bootcss.com/bootbox.js/4.4.0/bootbox.js"></script> -->
+  <!-- <script src="/javascripts/bootbox.min.js"></script> -->
+  <script src="/d3/d3.v3.js"></script>
+  <script src="/thirdParty/jquery-ui.js"></script>
+  <!-- <script type="text/javascript">
+    require.config({
+      baseUrl: '/myCesium/Source',
+      waitSeconds: 60
+    });
+  </script> -->
+  <!-- <script>
+    var linePoints = [];//全局变量
+    var ip = "192.168.1.100";
+  </script>
+ -->
+  <style>
+    @import url(/myCesium/Apps/Sandcastle/templates/bucket.css);
+    @import url(/stylesheets/DrawHelper.css);
+    @import url(/stylesheets/d3chart.css);
+    @import url(/stylesheets/loading.css);
+    @import url(/stylesheets/style1.css);
+    @import url(/javascripts/leaflet.css);
+
+    #cesiumContainer {
+      width: 100%;
+      height: 95%;
+      padding: 0;
+      overflow: hidden;
+      position: absolute;
+      bottom: 0px;
+    }
+
+    a {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    a:hover {
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .panel-heading {
+      font-size: 15px;
+    }
+
+    .bg-dark {
+      background-color: #222222 !important;
+    }
+
+    .list-group-item {
+      background-color: #313131;
+      border: 1px solid rgba(0, 0, 0, 0.96);
+    }
+
+    /* #toolbar {
+            background: rgba(42, 42, 42, 1);
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+            #toolbar input {
+                vertical-align: middle;
+                padding-top: 2px;
+                padding-bottom: 2px;
+            } */
+
+    #waypointControls {
+      background-color: DarkGrey;
+      padding: .25%;
+    }
+
+    #waypointInfo {
+      background-color: Red;
+      display: inline-block;
+    }
+
+    #export {
+      display: inline-block;
+      background-color: Blue;
+      margin: .25%;
+    }
+
+    #getInfo #analRes {
+      background: rgba(42, 42, 42, 1);
+      padding: 4px;
+      border-radius: 4px;
+      /*position: absolute;
+        top: 200px;
+        left: 10px;
+        width: 200px;
+        height: 320px;*/
+    }
+
+    .loginmodal-submit {
+      /* border: 1px solid #3079ed; */
+      border: 0px;
+      color: #fff;
+      text-shadow: 0 1px rgba(0, 0, 0, 0.1);
+      background-color: #4bd495d1;
+      padding: 17px 0px;
+      font-family: roboto;
+      font-size: 14px;
+      /* background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4d90fe), to(#4787ed)); */
+    }
+
+    .loginmodal-container {
+      padding: 30px;
+      max-width: 350px;
+      width: 100% !important;
+      background-color: #a0979785;
+      margin: 0 auto;
+      border-radius: 2px;
+      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      font-family: roboto;
+    }
+
+    .form-control {
+      display: block;
+      width: 100%;
+      font-size: 10px;
+      line-height: 1.25;
+      color: #313131;
+      background-color: #313131;
+      background-image: none;
+      background-clip: padding-box;
+      border: 1px solid rgba(253, 252, 252, 0.15);
+      border-radius: .25rem;
+      transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    .table tr td {
+      width: 70px;
+      padding: 4px;
+    }
+
+    #table_head th {
+      width: 70px;
+      padding: 4px;
+    }
+
+    #legend {
+      position: absolute;
+      display: none;
+      right: 10px;
+      bottom: 30px;
+      height: 144px;
+      width: 300px
+    }
+
+    .legenditem {
+      height: 23px
+    }
+
+    .legenditem_lable {
+      width: 150px;
+      height: 23px;
+    }
+
+    .legenditem_icon {
+      width: 150px;
+      height: 23px;
+    }
+
+    .cesium-widget-credits {
+      display: none !important;
+      /* 　　        visibility: hidden!important; */
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- <div>
+    <ul id="myTabs"class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#">Home</a></li>
+      <li role="presentation"><a href="#">Profile</a></li>
+      <li role="presentation"><a href="#">Messages</a></li>
+    </ul>
+    <div id="myTabContent" class="tab-content">
+        <div role="tabpanel" class="tab-pane fade"id="home" aria-labelledby="home-tab"><p>dsadad</p></div>
+        <div role="tabpanel" class="tab-pane fade" id="profile"aria-labelledby="profile-tab"><p>asdafafasdfasd</p></div>
+    </div>
+  </div> -->
+
+  <div id="wrapper" style="height: 100%">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark " style="height: 5%;margin-bottom: 0">
+      <!-- Brand -->
+
+      <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent" style="padding:0px">
+        <!-- Links -->
+        <ul class="navbar-nav" style="width:100%;padding-left:60%;float:right">
+
+          <li class="nav-item" id="ChangeLayers" style="color: #313131">
+            <br>
+            <table>
+              <tbody data-bind="foreach: layers">
+                <tr data-bind="css: { up: $parent.upLayer === $data, down: $parent.downLayer === $data }">
+                  <td>
+                    <span data-bind="text: name, visible: !$parent.isSelectableLayer($data)"></span>
+                    <select
+                      data-bind="visible: $parent.isSelectableLayer($data), options: $parent.baseLayers, optionsText: 'name', value: $parent.selectedLayer"></select>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <!-- <li class="nav-item">
+                  <a class="nav-link navbar-nav nav-item" >显示坐标</a>
+              </li> -->
+          <li class="nav-item">
+            <a class="nav-link" onclick="removeall()">清屏</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="startDrawHelper(viewer)">绘制</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/DataTrans">数据转换</a>
+            <!-- <div class="dropdown-menu">
+              
+              <input name="trajFilePath" type="file" id="trajFilePath" ; onchange="getFilePath(this)" />
+              <a class="dropdown-item" onclick="chartShow()">导入数据 </a>
+
+            </div> -->
+          </li>
+          <!-- Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="navbardrop1" data-toggle="dropdown">
+              演示数据
+            </a>
+            <div class="dropdown-menu">
+
+              <!-- <a class="dropdown-item"  onclick="createentity(pos_blh);">飞行轨迹：武汉——孟买</a> -->
+              <!-- <a class="dropdown-item"  onclick="drop11()">Aircraft</a>
+                      <a class="dropdown-item"  onclick="drop12()">Hot Air Balloon</a> -->
+              <a class="dropdown-item" onclick="loadCZMLTraj()">加载卫星轨迹</a>
+              <a class="dropdown-item" onclick="loadMultiCZML()">加载多段轨迹</a>
+              <a class="dropdown-item" onclick="loadKML()">加载KML数据</a>
+              <a class="dropdown-item" onclick="loadGeoJson()">加载geojson数据</a>
+
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="navbardrop2" data-toggle="dropdown">
+              飞行控制
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" onclick=" handelModel(true);">暂停</a>
+              <a class="dropdown-item" onclick=" handelModel(false);">继续</a>
+            </div>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="navbardrop3" data-toggle="dropdown">
+              视角切换
+            </a>
+            <div class="dropdown-menu">
+              <a id="frombehind" class="dropdown-item">look from behind</a>
+              <a id="frompilot" class="dropdown-item">look as the pilot</a>
+              <a id="fromtop" class="dropdown-item">look from bottom</a>
+              <a id="fromleft" class="dropdown-item">look from left</a>
+              <a id="fromright" class="dropdown-item">look from right</a>
+              <a data-toggle="tooltip" data-placement="right" data-html="true"
+                title="左键单击并拖动：移动整个地图&#13右键单击并拖动：放大和缩小相机&#13中轮滚动：也可以放大和缩小相机&#13中轮点击并拖动：围绕地球表面的点旋转相机"
+                class="dropdown-item">操作提示</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">退出</a>
+          </li>
+
+
+        </ul>
+      </div>
+
+
+    </nav>
+    <nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation" style="padding-left:0">
+      <ul class="nav sidebar-nav">
+        <li class="sidebar-brand">
+          <a href="#">
+            项目xx
+          </a>
+        </li>
+        <li style="display: inline-block">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-fw fa-plus"></i> 新建缓冲区</a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <div class="panel-heading" style="text-align: center;color: white;">项目名称</div>
+              <input id="prjName" style="width: 70%;margin-left: 15%;margin-right: 15% ;color:#313131" />
+            </li>
+            <li>
+              <a class="panel-heading" id="startdraw" name="startdraw" onclick=startDrawHelper(viewer)>开始绘制</a>
+            </li>
+            <li>
+              <span class="panel-heading" id="startdraw_tra">导入轨迹</span><br>
+              <input name="traBufferPath" type="file" id="traBufferPath" onchange="loadTraBuffer(this)" />
+            </li>
+            <li>
+              <span class="panel-heading">缓冲区大小:</span> <input type="text" id="bufferRange"
+                style="width:15%;color:#313131"><span>km</span>
+            </li>
+            <li>
+              <form id="form1">
+                <div class="panel-heading">选择轨迹所经区域信息：</div>
+
+                <input name="layer" type="checkbox" value="gis.osm_transport_free_1" />车站<br>
+                <input name="layer" type="checkbox" value="gis.osm_traffic_free_1" />交通标志<br>
+                <input name="layer" type="checkbox" value="gis.osm_places_free_1" />地点<br>
+
+                <input name="layer" type="checkbox" value="gis.osm_waterways_free_1" />江河<br>
+                <input name="layer" type="checkbox" value="gis.osm_roads_free_1" />道路<br>
+                <input name="layer" type="checkbox" value="gis.osm_railways_free_1" />铁路<br>
+
+                <input name="layer" type="checkbox" value="gis.osm_water_a_free_1" />湖泊河流<br>
+                <input name="layer" type="checkbox" value="GlobalData">人口<br>
+
+              </form>
+            </li>
+            <li>
+              <div class="panel-heading" style="text-align: center; font-size: 18px">
+                <a id="btnSubmit">提交</a>
+            </li>
+            <li>
+              <div class="panel-heading" style="text-align: center; font-size: 18px">
+                <div>分析结果</div>
+                <ul class="list-group" id="analRes"></ul>
+              </div>
+              <a id="rePrj" style="display: inline">重新提交 </a>
+              <a id="exReport" style="display: inline">导出报告 </a>
+            </li>
+          </ul>
+        </li>
+
+
+        <li>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-fw fa-plus"></i>加载飞行轨迹数据</a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <input name="trajFilePath"
+                style="width: 180px; height: 30px; margin: 0 auto; background:rgba(42,42,42,0.8); padding: 4px"
+                type="file" ; id="trajFilePath" ; multiple onchange="getFilePath(this)" />
+            </li>
+            <li>
+              <div class="panel-heading" style="text-align: center; font-size: 14px">选择模型
+              </div>
+              <div class="radio" id="radio_buttom" style="text-align: center">
+                <label style="margin: 0 auto">
+                  <input type="radio" name="optionsRadios" value="/model/Cesium_Air.glb" checked>
+                  飞机
+                </label>
+                <label style="margin: 0 auto">
+                  <input type="radio" name="optionsRadios" value="/model/CesiumBalloon.glb">
+                  热气球
+                </label>
+              </div>
+            </li>
+            <li>
+              <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1" style="padding:0 0;font-size: 14px">高度显示倍数</span>
+                <input type="text" class="form-control" placeholder="mag" aria-describedby="basic-addon1"
+                  id='magnification_h' style="font-size: 14px;width:65px;color:white">
+              </div>
+            </li>
+            <li>
+              <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1"
+                  style="padding-left:14px;font-size: 14px;width:85px;text-align: center">快放倍数</span>
+                <input type="text" class="form-control" placeholder="mag" aria-describedby="basic-addon1"
+                  id='magnification_t' style="font-size: 14px;width:65px;color:white">
+              </div>
+            </li>
+            <li>
+              <form id="para_fly">
+                <div class="panel-heading">飞行展示参数选择</div>
+                <!-- <input name="para" type="checkbox" value="height" />高度<br> -->
+                <input name="para" type="checkbox" value="attackAngle" />攻角<br>
+                <input name="para" type="checkbox" value="sideslipAngle" />侧滑角<br>
+
+                <input name="para" type="checkbox" value="dipAngle" />倾角<br>
+                <input name="para" type="checkbox" value="flightPathAngle" />航线偏角<br>
+                <input name="para" type="checkbox" value="ballistic" />弹道倾角<br>
+
+                <input name="para" type="checkbox" value="distance" />航程<br>
+                <input name="para" type="checkbox" value="speed">速度<br>
+                <input name="para" type="checkbox" value="pressure" />动压<br>
+                <input name="para" type="checkbox" value="heatFlow" />热流<br>
+                <input name="para" type="checkbox" value="FXGZ" />法向倾角<br>
+              </form>
+            </li>
+          </ul>
+        </li>
+        <li id="shapeFilePathContainer">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-fw fa-plus"></i>加载图形文件</a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <input name="trajFilePath"
+                style="width: 180px; height: 30px; margin: 0 auto; background:rgba(42,42,42,0.8); padding: 4px"
+                type="file" ; id="shapeFilePath" ; multiple onchange="loadShapes(this)" />
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa fa-fw fa-plus"></i>历史项目列表</a>
+          <ul class="dropdown-menu" role="menu">
+            <li>
+              <div style="overflow:auto">
+                <table class="table" style="width:550px">
+                  <h6>
+                    <div align='center'>历史项目列表</div>
+                  </h6>
+
+                  <tr id="table_head">
+
+                    <th>工程名</th>
+                    <th>生成时间</th>
+                    <th>缓冲距离</th>
+                    <th>分析图层</th>
+                    <th>操作</th>
+                  </tr>
+                  <% for(var i = 0; i < datas.length; i++) {%>
+
+                  <% if(datas[i].username==user.username) {%>
+                  <tr>
+
+
+                    <td><%= datas[i].projectname %></td>
+                    <td><%= datas[i].date %></td>
+                    <td id="bufferdistance<%=i%>"><%=datas[i].bufferdistance%></td>
+                    <td><%= datas[i].layers %></td>
+                    <td><a href="/HtmlPage1/del/<%= datas[i].id %>">删除</a></td>
+                    <td><a id="<%=datas[i].projectname%>" username="<%=user.username%>"
+                        bufferdistance="<%= datas[i].bufferdistance %>" layers="<%= datas[i].layers %>"
+                        onclick=checkresult(this)>查看</a></td>
+                  </tr>
+
+                  <%}%>
+                          
+                      <% } %>
+                </table>
+              </div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div id="popup" class="alert alert-warning"><a id="close" class="close">&times;</a>
+      <div align="center"><strong id="popup-content" style="color: #b12e30;"></strong></div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+      <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+        <span class="hamb-top"></span>
+        <span class="hamb-middle"></span>
+        <span class="hamb-bottom"></span>
+      </button>
+    </div>
+
+    <div id="toolbar1" style="z-index: 100;">
+    </div>
+
+
+    <div id="logging" style="z-index: 100;"></div>
+
+    <div class="modal fade" id="createFileMModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createFileTitle">创建文件</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="fileName" class="col-form-label">文件名</label>
+                <input type="text" autofocus class="form-control" id="fileName">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="createFileSureBut">确定</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+    <div id="cesiumContainer">
+      <div id="chartContainer">
+        <div id="chart" style="z-index:10"></div>
+        <div id="chart" style="z-index:10"></div>
+        <div id="chart" style="z-index:10"></div>
+      </div>
+
+    </div>
+
+    <div id="loadingGIF" style="display:none">
+      <div id="fountainG_1" class="fountainG"></div>
+      <div id="fountainG_2" class="fountainG"></div>
+      <div id="fountainG_3" class="fountainG"></div>
+      <div id="fountainG_4" class="fountainG"></div>
+      <div id="fountainG_5" class="fountainG"></div>
+      <div id="fountainG_6" class="fountainG"></div>
+      <div id="fountainG_7" class="fountainG"></div>
+      <div id="fountainG_8" class="fountainG"></div>
+    </div>
+
+    <div id='legend'>
+      <div class="legenditem">
+        <span class="legenditem_lable" style="padding-left:42.24px"> [0,50000]</span>
+        <canvas id='myCanvas1' class="legenditem_icon"></canvas>
+      </div>
+      <div class="legenditem">
+        <span class="legenditem_lable" style="padding-left:7.03px"> [50000,100000]</span>
+        <canvas id='myCanvas2' class="legenditem_icon"></canvas>
+      </div>
+      <div class="legenditem">
+        <span class="legenditem_lable">[100000,150000]</span>
+        <canvas id='myCanvas3' class="legenditem_icon"></canvas>
+      </div>
+      <div class="legenditem">
+        <span class="legenditem_lable">[150000,200000]</span>
+        <canvas id='myCanvas4' class="legenditem_icon"></canvas>
+      </div>
+      <div class="legenditem">
+        <span class="legenditem_lable">[200000,250000]</span>
+        <canvas id='myCanvas5' class="legenditem_icon"></canvas>
+      </div>
+      <div class="legenditem">
+        <span class="legenditem_lable" style="padding-left:31.88px"> [250000,∞]</span>
+        <canvas id='myCanvas6' class="legenditem_icon"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header" style="padding-top :29px;">
+          <h4 class="modal-title" id="myModalLabel" style="color: #222222;">
+            请输入禁飞区高度
+          </h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            &times;
+          </button>
+
+        </div>
+        <div class="modal-body">
+          <input type="text" autofocus class="form-control" id="zoneHeight"
+            style="background-color: #fff;border-color:black;">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            确定
+          </button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+
+    <!-- /#wrapper -->
+    <script src="/javascripts/ImportCesium.js"></script>
+    <script src="/javascripts/changeview.js"></script>
+    <!-- <script src="/javascripts/loadPos_blh.js"></script> -->
+
+    <script src="/javascripts/LoadDefault.js"></script>
+    <script src="/javascripts/FlyControl.js"></script>
+    <script src="/javascripts/ChangeLayers.js"></script>
+    <script src="/javascripts/bufferAnalysis.js"></script>
+    <script src="/javascripts/loadTraj.js"></script>
+    <script src="/javascripts/DrawHelper.js"></script>
+    <script src="/javascripts/DrawHelperstart.js"></script>
+    <script src="/javascripts/loadShape.js"></script>
+    <script src="/javascripts/loadMultiCZML.js"></script>
+    <script src="/javascripts/showRes.js"></script>
+    <script src="/javascripts/readPopulation.js"></script>
+    <script src="/javascripts/d3height.js"></script>
+    <script src="/javascripts/loadTraBuffer.js"></script>
+    <script src="/javascripts/chartMove.js"></script>
+    <script src="/javascripts/legend.js"></script>
+    <script src="/javascripts/showdataparas.js"></script>
+
+    <script>
+      // bootbox.prompt("确认删除", function (result) {
+      //                var strResult = result;
+      //                        });
+      // $('#myTabs a').click(function (e) {
+      //   e.preventDefault()
+      //   $(this).tab('show')
+      // })
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        // bootbox.prompt("确认删除", function (result) {
+        //              var strResult = result;
+        //                      });
+
+        //开启鹰眼
+        // initWork()
+
+        $(".jconfirm-box-container").css({
+          "width": "1000",
+          "height": "800",
+          "float": "right"
+        });
+        $("#frombehind").click(function () {
+          var viewoption = "fromBehind";
+          var entity = viewer.trackedEntity;
+          changeview(entity, viewoption);
+        });
+        $("#frompilot").click(function () {
+          var viewoption = "pilotview";
+          var entity = viewer.trackedEntity;
+          changeview(entity, viewoption);
+        });
+        $("#fromtop").click(function () {
+          var viewoption = "lookdown";
+          var entity = viewer.trackedEntity;
+          changeview(entity, viewoption);
+        });
+        $("#fromleft").click(function () {
+          var viewoption = "fromleft";
+          var entity = viewer.trackedEntity;
+          changeview(entity, viewoption);
+        });
+        $("#fromright").click(function () {
+          var viewoption = "fromright";
+          var entity = viewer.trackedEntity;
+          changeview(entity, viewoption);
+        });
+
+        var projectname = $('#prjName');
+
+        var bufferdistance = $('#bufferRange');
+
+        // var uPrj = $('#uPrj');
+        // var uRes = $('#uRes');
+        var loadingGIF = $('#loadingGIF');
+        var submit = $('#btnSubmit');
+        var popup = $("#popup");
+        var popupContent = $("#popup-content");
+        var close = $("#close");
+        var exReport = $("#exReport");
+        // $('#rePrj').click(function () {
+        //   uPrj.css("display", "block");
+        // });
+
+        popup.hide();
+        close.click(function () {
+          popup.hide();
+        });
+        submit.click(function () {
+          //var points=JSON.stringify(getSortedPoints());
+          //var layername=JSON.stringify(pickLayer());
+          //alert("clicked");
+
+          submit.disabled = "true"; //使标签不能重复点击执行函数
+          if (projectname.val() == "" || bufferdistance.val() == "") {
+            popup.show();
+            popupContent.html("提交信息不完整！");
+            //submit.disabled="false";
+
+          } else {
+            //通过ajax和后台的js代码联系起来
+            $.ajax({
+              url: "/HtmlPage1/projectname",
+              data: {
+                projectname: projectname.val(),
+              },
+              type: "POST",
+              success: function (data, textStatus) {
+
+                //var  dataJson=eval("("+data+")");
+                //data为从服务器传过来的res参数对象中的result
+
+                //一下这一步实际没有必要？？
+                var dataJson = eval(data);
+
+                if (dataJson.code == 200) { //如果项目名唯一有效就将数据提交给webservice进行分析
+
+                  // uRes.css("display", "block");
+                  var analRes = $("#analRes");
+                  analRes.html("");
+                  loadingGIF.css("display", "block");
+                  var username = dataJson.msg;
+                  var datatoWeb = {
+                    userName: username,
+                    projectName: projectname.val(),
+                    bufferSize: bufferdistance.val(),
+                    points: getPoints(linePoints),
+                    layers: pickLayer()
+                  };
+                  ajaxtoWebservice(datatoWeb);
+                  // alert("提交成功");
+                  // showRes(dataJson.msg);
+
+
+                } else if (dataJson.code == 300) {
+                  popup.show();
+                  popupContent.html(dataJson.msg);
+
+                } else {
+                  popup.show();
+                  popupContent.html("提交出错！");
+                }
+                //submit.disabled="false";
+              },
+              error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("error:" + textStatus);
+                //submit.disabled="false";
+              }
+            });
+          }
+
+        });
+
+      })
+
+
+      function ajaxtoWebservice(datatoWeb) {
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:8085/WebService1.asmx/postData",
+          //将对象转换成一个json的字符串，因为data参数只能为json字符串
+          data: JSON.stringify(datatoWeb),
+          //异步访问
+          async: true,
+          success: function (message, textStatus) {
+            if (message != undefined) {
+              //如何做正在加载的动画
+              $("#loadingGIF").css("display", "none");
+              console.log(message);
+              //message返回的是一个<string></string>包着的json字符串，所以需要做如下的一个处理
+              var messageHTML = message.documentElement.innerHTML;
+              //这里的messageJSON是什么东西哇
+              var messageJSON = $.parseJSON(messageHTML);
+              var projectUrl = '/project/' + datatoWeb.userName + '/' + datatoWeb.projectName + '/';
+              //alert(messageJSON.toString());
+              //globle=messageJSON;
+              console.log("111");
+              showRes(projectUrl, messageJSON);
+              //不用点击保存，提交后直接保存
+              uptoSQL(datatoWeb, messageJSON);
+              // var savePrj=document.getElementById("savePrj");
+              // savePrj.addEventListener("click",function(){                        
+              //});
+              //删除临时文件
+              //var fso=new ActiveXObject("Scripting.FileSystemObject");
+              //var f=fso.GetFile(projectUrl+"population.json");
+              //f.Delete();
+              var exReport = document.getElementById("exReport");
+              exReport.addEventListener("click", function () {
+                downReport(datatoWeb, projectUrl);
+              });
+
+
+
+
+            }
+
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            $("#loadingGIF").css("display", "none");
+            alert("error:" + textStatus);
+          }
+        })
+
+
+      }
+
+      var layersJson = {
+        "gis.osm_transport_free_1": "车站",
+        "gis.osm_traffic_free_1": "交通标志",
+        "gis.osm_places_free_1": "地点",
+        "gis.osm_waterways_free_1": "江河",
+        "gis.osm_roads_free_1": "道路",
+        "gis.osm_railways_free_1": "铁路",
+        "gis.osm_water_a_free_1": "湖泊河流",
+        "GlobalData": "人口"
+      };
+
+      function downReport(datatoWeb, projectUrl) {
+        var username = datatoWeb.userName;
+        var projectname = datatoWeb.projectName;
+        var fileUrl = projectUrl + "report.txt";
+        var saveFileName = username + "_" + projectname + "_报告.txt";
+        download(fileUrl, saveFileName);
+      }
+
+      function getBlob(url) {
+        return new Promise(resolve => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', url, true);
+          xhr.responseType = 'blob';
+          xhr.onload = () => {
+            if (xhr.status === 200) {
+              resolve(xhr.response);
+            }
+          };
+          xhr.send();
+        });
+      }
+
+      function saveAs(blob, filename) {
+        if (window.navigator.msSaveOrOpenBlob) {
+          navigator.msSaveBlob(blob, filename);
+        } else {
+          const link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = filename;
+          link.click();
+          window.URL.revokeObjectURL(link.href);
+        }
+      }
+
+      function download(url, filename) {
+        getBlob(url).then(blob => {
+          saveAs(blob, filename);
+        });
+      }
+
+      function uptoSQL(datatoWeb, messageJSON) {
+        var myDate = new Date();
+        var date = myDate.toLocaleDateString();
+        //console.log(date);
+        var popup = $("#popup");
+        var popupContent = $("#popup-content");
+        var listvectorRes = messageJSON.listvectorRes;
+        var listrasterRes = messageJSON.listrasterRes;
+        //console.log(listrasterRes);
+        var layerContent = [];
+        var layers = "";
+        for (var i = 0; i < listvectorRes.length; i++) {
+          layerContent.push({
+            layername: listvectorRes[i].layerName,
+            context: JSON.stringify(listvectorRes[i])
+
+          })
+
+        };
+        for (var i = 0; i < listrasterRes.length; i++) {
+          layerContent.push({
+            layername: listrasterRes[i].layerName,
+            context: JSON.stringify(listrasterRes[i].content)
+
+          })
+        };
+        console.log(layerContent);
+        for (var i = 0; i < layerContent.length; i++) {
+          layers += layersJson[layerContent[i].layername] + " ";
+        }
+
+        var dataToSQL = {
+          projectName: datatoWeb.projectName,
+          userName: datatoWeb.userName,
+          bufferSize: datatoWeb.bufferSize,
+          points: JSON.stringify(datatoWeb.points),
+          layers: layers,
+          "gis.osm_transport_free_1": null,
+          "gis.osm_traffic_free_1": null,
+          "gis.osm_places_free_1": null,
+          "gis.osm_waterways_free_1": null,
+          "gis.osm_roads_free_1": null,
+          "gis.osm_railways_free_1": null,
+          "gis.osm_water_a_free_1": null,
+          "GlobalData": null,
+          date: date
+        };
+
+
+        for (var i = 0; i < layerContent.length; i++) {
+          dataToSQL[layerContent[i].layername] = layerContent[i].context;
+        }
+        console.log(dataToSQL);
+        $.ajax({
+          type: "POST",
+          url: "/HtmlPage1/projectInfo",
+          data: dataToSQL,
+          async: true,
+          success: function (message, textStatus) {
+            console.log(message);
+            var dataJson = eval(message);
+            if (dataJson.code == 200) {
+              //alert("hhh");
+              alert(dataJson.msg);
+            } else if (dataJson.code == 300) {
+              popup.show();
+              popupContent.html(dataJson.msg);
+
+            } else if (dataJson.code == 400) {
+              popup.show();
+              popupContent.html(dataJson.msg);
+
+            } else {
+              popup.show();
+              popupContent.html("保存出错！");
+            }
+
+          },
+          error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert("error:" + textStatus);
+          }
+        })
+
+      }
+
+
+
+      function removeall() {
+        viewer.entities.removeAll();
+        viewer.dataSources.removeAll();
+        location.reload(true);
+
+        //viewer.dataSource.removeAll();
+      }
+
+      function drop1() {
+        viewer.entities.removeAll();
+      }
+
+      function drop11() {
+        createModel('/myCesium/Apps/SampleData/models/CesiumAir/Cesium_Air.glb', 30000000.0);
+      }
+
+      function drop12() {
+        createModel('/myCesium/Apps/SampleData/models/CesiumBalloon/CesiumBalloon.glb', 300000.0);
+      }
+
+      function startBufferAnalysis() {
+        // $("#uPrj").css("display", "block");
+        // $("#uRes").css("display", "none");
+        // var prjName = $("#prjName");
+        // var checkbox = $("#form1").find("input");
+        // var bufferRange = $("#bufferRange");
+        // prjName.val("");
+        // checkbox.attr("checked", false);
+        // bufferRange.val("");
+        viewer.entities.removeAll();
+        viewer.dataSources.removeAll();
+        //scene.primitives.removeAll();
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(114.31, 30.52, 30000000.0)
+        });
+
+        //location.reload(true);
+
+
+      }
+      // function chartShow() {
+      //   $("#loadData").css("display", "block");
+      // }
+
+      var trigger = $('.hamburger'),
+        overlay = $('.overlay'),
+        isClosed = false;
+
+      trigger.click(function () {
+        hamburger_cross();
+      });
+
+      function hamburger_cross() {
+
+        if (isClosed == true) {
+          overlay.hide();
+          trigger.removeClass('is-open');
+          trigger.addClass('is-closed');
+          isClosed = false;
+        } else {
+          overlay.show();
+          trigger.removeClass('is-closed');
+          trigger.addClass('is-open');
+          isClosed = true;
+        }
+      }
+
+      $('[data-toggle="offcanvas"]').click(function () {
+        $('#wrapper').toggleClass('toggled');
+      })
+
+      function checkresult(obj) {
+        //获取被点击标签对象的属性的方法
+        var projectname = $(obj).prop('id');
+        var username = $(obj).attr('username');
+        var rasterresultpath = "/project/" + username + "/" + projectname + "/population.json";
+        var vectorresultpath = "/project/" + username + "/" + projectname;
+        var bufferdistance = $(obj).attr('bufferdistance');
+        var layers = $(obj).attr('layers');
+        //console.log(value);
+        var layersarr = new Array();
+        layersarr = layers.split(" ");
+        for (i = 0; i < layersarr.length; i++) {
+          showStoredvectorRes(layersarr[i], vectorresultpath);
+        }
+        readInPopJson(rasterresultpath, bufferdistance);
+      }
+    </script>
+    <script>
+
+    </script>
+</body>
+
+</html>

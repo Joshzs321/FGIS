@@ -1,0 +1,2 @@
+\\.\pipe\0318c58e-635e-4379-8bec-d891e2c9b5b8
+[0mGET /img/dragIcon.png [36m304 [0m10.876 ms - -[0m

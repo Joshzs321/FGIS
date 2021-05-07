@@ -1,0 +1,21 @@
+[
+    {
+        "shape": "circles",
+        "data": [
+            {
+                "center": {
+                    "lon": 116.1,
+                    "lat": 35.3
+                },
+                "radius": 20000
+            },
+            {
+                "center": {
+                    "lon": 117.1,
+                    "lat": 35.3
+                },
+                "radius": 20000
+            }
+        ]
+    }
+]

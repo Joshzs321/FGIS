@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="author" content="WHU SGG Cesium Squad">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+  <meta name="description" content="First Interface ">
+  <meta name="cesium-sandcastle-labels" content="Showcases, DataSources">
+  <title>FGIS-三维飞行演示</title>
+  <script src="/myCesium/Build/CesiumUnminified/Cesium.js"></script>
+  <!-- <script src="/myCesium/Source/Cesium.js"></script> -->
+  <script type="text/javascript" src="/myCesium/Apps/Sandcastle/Sandcastle-header.js"></script>
+  <link rel="stylesheet" href="/stylesheets/bootstrap.css">
+  <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+  
+  <link rel="stylesheet" href="/stylesheets/style1.css">
+  <script src="/javascripts/jquery.min.js"></script>
+  <script src="/javascripts/popper.min.js"></script>
+  <script type="text/javascript" src="/myCesium/ThirdParty/requirejs-2.1.20/require.js"></script>
+  <script type="text/javascript"
+    src="/myCesium/Apps/Sandcastle/customize/flightDemo20180308/jquery-2.1.4.min.js"></script>
+  <script src="/javascripts/bootstrap.min.js"></script>
+  <!-- <script src="https://cdn.bootcss.com/bootbox.js/4.4.0/bootbox.js"></script> -->
+  <script src="/javascripts/bootbox.min.js"></script>
+  <script src="/d3/d3.v3.js"></script>
+  <script src="/thirdParty/jquery-ui.js"></script>
+</head>
+
+<body>
+<div class="modal fade" id="createFileMModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createFileTitle">创建文件</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="fileName" class="col-form-label">文件名</label>
+              <input type="text" autofocus class="form-control" id="fileName">
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="createFileSureBut">确定</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </body>

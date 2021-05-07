@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+       <meta charset="utf-8">
+       <title>数据转换模块</title>
+       <script type="text/javascript" src="/d3/d3.v3.js"></script>
+       <script type="text/javascript" src="/javascripts/jquery-3.3.1.min.js"></script>
+    </head>
+    <body>
+    <div id="div1" style="width:400px; height:200px; margin: auto; position: absolute; top: 0;left: 0;right: 0;bottom: 0;text-align: center; background: rgba(0, 0, 0, 0.8);">
+    	<br>
+		<span ><font size="8" face="arial" color="white">文件转换</font></span><br>
+		<br>
+    	<input name="filePath" style="width: 200px; height: 30px; margin: 0 auto; background:rgba(42,42,42,0.8); padding: 4px" type="file"; id="filePath"; onchange="getFilePath(this)"/><br>
+    	<br>
+	   	<a id="download" download="TrajData.json" disabled="false" href=""></a>
+    </div>
+    <script type="text/javascript">
+    var traj=[];
+    //var url="data/trajdata.csv";
+    var url;
+    function getFilePath(d){
+    	var fakePath=d.value;
+    	var temp=fakePath.split("\\");
+    	var fileName=temp[temp.length-1];
+    	url="data/"+fileName;
+    	if(url){
+    		traj=readCsv(url);
+    	}
+    	else{
+    		alert('文件路径不对');
+    	}
+    }
+    function readCsv(url){
+       	var data;
+		d3.csv(url,function(csvdata){
+			data=csvdata;
+			traj=saveAsTraj(data);
+				exportList();
+		});
+		return traj;
+	}
+
+	
+
+	 function exportList () {
+        var jsonstr=JSON.stringify(traj);
+        var dataFile = new Blob([jsonstr], {type: 'text/plain'});    //Turn string into file-like Blob
+        var download = document.getElementById('download');
+        if(download.href === window.location.href) {
+            //link Blob to downloads
+            download.href= window.URL.createObjectURL(dataFile);
+            //Create button to click
+            var button = document.createElement("BUTTON");
+            button.appendChild(document.createTextNode("保存到本地"));
+            //Add button to document
+            download.appendChild(button);
+        } 
+        else {
+            window.URL.revokeObjectURL(download.firstChild.href);   //Destroy old URL to caulk memory leak
+            download.href = window.URL.createObjectURL(dataFile);   //link new URL to file
+        }
+    }
+    function saveAsTraj(d){
+		for(var i=0;i<d.length;i++)
+			{
+                var heading=parseFloat(d[i].heading)+parseFloat(d[i].sideslipAngle);
+                var pitch=parseFloat(d[i].attackAngle)+parseFloat(d[i].ballistic);
+                var roll=parseFloat(d[i].dipAngle);
+					traj.push({
+					time:parseFloat(d[i].time),//累计时间
+					longitude:parseFloat(d[i].longitude),//经度
+					latitude:parseFloat(d[i].latitude),//纬度
+					height:parseFloat(d[i].height),//高度
+                    heading:heading,
+                    pitch:pitch,
+                    roll:roll,
+                    //以上为主要参数
+					distance:parseFloat(d[i].remain),//航程
+					speed:parseFloat(d[i].speed),//速度
+					pressure:parseFloat(d[i].pressure),//动压
+					attackAngle:parseFloat(d[i].attackAngle),//攻角
+					sideslipAngle:parseFloat(d[i].sideslipAngle),//侧滑角
+					dipAngle:parseFloat(d[i].dipAngle),//侧倾角
+					flightPathAngle:parseFloat(d[i].heading),//航向角
+					ballistic:parseFloat(d[i].ballistic),//弹道倾角
+					heatFlow:parseFloat(d[i].heatFlow),//热流
+					FXGZ:parseFloat(d[i].FXGZ)//法向过载
+
+				});
+			}
+			return traj;
+		}
+		
+    </script>
+    </body>
+</html>

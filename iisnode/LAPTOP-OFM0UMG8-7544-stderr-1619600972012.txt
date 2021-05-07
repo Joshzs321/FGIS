@@ -1,0 +1,8 @@
+(node:7544) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:7544) [DEP0095] DeprecationWarning: timers.enroll() is deprecated. Please use setTimeout instead.
+(node:7544) [DEP0126] DeprecationWarning: timers.active() is deprecated. Please use timeout.refresh() instead.
+(node:7544) [DEP0096] DeprecationWarning: timers.unenroll() is deprecated. Please use clearTimeout instead.
+(node:7544) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+Wed, 28 Apr 2021 09:40:29 GMT express deprecated res.sendfile: Use res.sendFile instead at routes\index.js:7:5
+Wed, 28 Apr 2021 09:40:44 GMT express deprecated res.sendfile: Use res.sendFile instead at routes\login.js:11:6

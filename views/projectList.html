@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="WHU SGG Cesium Squad">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="description" content="First Interface ">
+    <meta name="cesium-sandcastle-labels" content="Showcases, DataSources">
+    <title>项目列表</title>
+    <script src="/myCesium/Build/CesiumUnminified/Cesium.js"></script>
+    <!-- <script src="/myCesium/Source/Cesium.js"></script> -->
+    <script type="text/javascript" src="/myCesium/Apps/Sandcastle/Sandcastle-header.js"></script>
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">   
+    <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/popper.min.js"></script>    
+    <script type="text/javascript" src="/myCesium/ThirdParty/requirejs-2.1.20/require.js"></script>
+    <script type="text/javascript" src="/myCesium/Apps/Sandcastle/customize/flightDemo20180308/jquery-2.1.4.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/d3/d3.v3.js"></script>
+    <script src="/thirdParty/jquery-ui.js"></script>
+    <script type="text/javascript">
+    require.config({
+        baseUrl : '/myCesium/Source',
+        waitSeconds : 60
+    });
+    </script>
+    <script>
+        var linePoints=[];//全局变量
+    </script>
+
+    <style>
+        @import url(/myCesium/Apps/Sandcastle/templates/bucket.css);
+        @import url(/stylesheets/DrawHelper.css);
+        @import url(/stylesheets/d3chart.css);
+        @import url(/stylesheets/loading.css);
+        
+        #cesiumContainer{
+            width: 100%;
+            height:95%;
+            padding: 0;
+            overflow: hidden;
+            position: absolute;
+            bottom: 0px;
+        }
+        /* #cesiumContainer{
+            width: 100%; 
+            height:100%; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            float: right
+        } */
+        a {
+            color: rgba(255,255,255,0.8);
+        }
+
+        a:hover {
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .panel-heading {
+            font-size: 15px;
+        }
+
+        .bg-dark {
+            background-color: #222222 !important;
+        }
+
+        .list-group-item {
+            background-color: #313131;
+            border: 1px solid rgba(0,0,0,0.96);
+        }
+
+        /* #toolbar {
+            background: rgba(42, 42, 42, 1);
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+            #toolbar input {
+                vertical-align: middle;
+                padding-top: 2px;
+                padding-bottom: 2px;
+            } */
+
+        #waypointControls {
+            background-color: DarkGrey;
+            padding: .25%;
+        }
+
+        #waypointInfo {
+            background-color: Red;
+            display: inline-block;
+        }
+
+        #export {
+            display: inline-block;
+            background-color: Blue;
+            margin: .25%;
+        }
+        #getInfo #analRes {
+            background: rgba(42, 42, 42, 1);
+            padding: 4px;
+            border-radius: 4px;
+            /*position: absolute;
+        top: 200px;
+        left: 10px;
+        width: 200px;
+        height: 320px;*/
+        }
+
+        .loginmodal-submit {
+            /* border: 1px solid #3079ed; */
+            border: 0px;
+            color: #fff;
+            text-shadow: 0 1px rgba(0,0,0,0.1);
+            background-color: #4bd495d1;
+            padding: 17px 0px;
+            font-family: roboto;
+            font-size: 14px;
+            /* background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4d90fe), to(#4787ed)); */
+        }
+
+        .loginmodal-container {
+            padding: 30px;
+            max-width: 350px;
+            width: 100% !important;
+            background-color: #a0979785;
+            margin: 0 auto;
+            border-radius: 2px;
+            box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            font-family: roboto;
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            font-size: 10px;
+            line-height: 1.25;
+            color: #313131;
+            background-color: #313131;
+            background-image: none;
+            background-clip: padding-box;
+            border: 1px solid rgba(253, 252, 252, 0.15);
+            border-radius: .25rem;
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        }
+
+        ul {
+            list-style: none;
+        }
+        /* .cesium-viewer-toolbar {
+            display: block;
+            position: absolute;
+            top: 40px;
+            right: 5px;
+        
+        } */
+        .projectlist{
+            position:absolute;
+            left:10px;
+            top:50px;
+            width:300px;
+            height:400px;
+            z-index: 1000;
+            background-color: #222222;
+            padding:10px;
+        }
+        .table td, .table th {
+            padding: .25rem;
+            vertical-align: top;
+            border-top: 1px solid #e9ecef;
+        }
+
+       
+    </style>
+
+</head>
+<body class="sandcastle-loading" data-sandcastle-bucket="bucket-requirejs.html">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark " style="height: 5%">
+                <!-- Brand -->
+               
+                <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+                    <!-- Links -->
+                    <ul class="navbar-nav">
+        
+                        <li class="nav-item" id="ChangeLayers">
+                            <table>
+                                <tbody data-bind="foreach: layers">
+                                    <tr data-bind="css: { up: $parent.upLayer === $data, down: $parent.downLayer === $data }">
+                                        <td>
+                                            <span data-bind="text: name, visible: !$parent.isSelectableLayer($data)"></span>
+                                            <select data-bind="visible: $parent.isSelectableLayer($data), options: $parent.baseLayers, optionsText: 'name', value: $parent.selectedLayer"></select>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link navbar-nav nav-item" >显示坐标</a>
+                        </li> -->
+                        <li class="nav-item">
+                           <a class="nav-link" onclick="removeall()">清屏</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" onclick="startDrawHelper(viewer)">绘制</a>
+                         </li>
+        
+                        <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle"  id="navbardrop1" data-toggle="dropdown">
+                                    本地数据
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="/DataTrans" >数据转换</a>
+                                    <a class="dropdown-item" onclick="chartShow()">导入数据 </a>                   
+            
+                                </div>
+                            </li>
+                        <!-- Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"  id="navbardrop1" data-toggle="dropdown" >
+                                演示数据
+                            </a>
+                            <div class="dropdown-menu">
+                            
+                                <!-- <a class="dropdown-item"  onclick="createentity(pos_blh);">飞行轨迹：武汉——孟买</a> -->
+                                <!-- <a class="dropdown-item"  onclick="drop11()">Aircraft</a>
+                                <a class="dropdown-item"  onclick="drop12()">Hot Air Balloon</a> -->
+                                <a class="dropdown-item"  onclick="loadCZMLTraj()">加载卫星轨迹</a>
+                                <a class="dropdown-item"  onclick="loadMultiCZML()">加载多段轨迹</a>
+                                <a class="dropdown-item"  onclick="loadKML()">加载KML数据</a>
+                                <a class="dropdown-item"  onclick="loadGeoJson()">加载geojson数据</a>
+        
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"  id="navbardrop2" data-toggle="dropdown">
+                                飞行控制
+                            </a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item"  onclick=" handelModel(true);">暂停</a>
+                                <a class="dropdown-item"  onclick=" handelModel(false);">继续</a>
+        
+                            </div>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle"  id="navbardrop3" data-toggle="dropdown">
+                                视角切换
+                            </a>
+                            <div class="dropdown-menu">
+                                <a id="frombehind"class="dropdown-item" >look from behind</a>
+                                <a id="frompilot"class="dropdown-item"  >look as the pilot</a>
+                                <a id="fromtop" class="dropdown-item"  >look from top</a>
+                                <a id="initview" class="dropdown-item" >还原</a>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/projectList">我的项目</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/HtmlPage1">返回</a>
+                        </li>
+                        
+        
+                    </ul>
+                </div>
+    </nav>
+   
+  
+    
+    <div id="pointsChart"style="z-index: 100;">自定义轨迹点</div>
+    <div id="toolbar1" style="z-index: 100;"></div>
+    <div id="logging"style="z-index: 100;"></div> 
+   
+    <div class="container-fluid" style="height: 100%">
+
+        <div class="row" style="height: 95%">
+            <div class="col-sm-4" style="background-color: rgba(42, 42, 42, 0.8); padding: 15px">
+                
+           
+                           
+                <div>
+                <table class="table" >
+                    <h6><div align='center'>历史项目列表</div></h6>
+                   
+                    <tr>
+                        
+                        <th>工程名</th>
+                        <th>生成时间</th>
+                        <th>缓冲距离</th>
+                        <th>分析图层</th>
+                        <th>操作</th>
+                    </tr>
+                    <% for(var i = 0; i < datas.length; i++) {%>
+                     
+                    <% if(datas[i].username==user.username) {%>
+                    <tr>
+                            
+                        
+                            <td><%= datas[i].projectname %></td>
+                            <td><%= datas[i].date %></td>
+                            <td id="bufferdistance<%=i%>"><%=datas[i].bufferdistance%></td>
+                            <td><%= datas[i].layers %></td>
+                            <td><a href="/projectList/del/<%= datas[i].id %>">删除</a></td>
+                            <td><a id="<%=datas[i].projectname%>" username="<%=user.username%>" bufferdistance="<%= datas[i].bufferdistance %>" layers="<%= datas[i].layers %>" onclick=checkresult(this)>查看</a></td>
+                    </tr>
+                
+                    <%}%>
+                        
+                    <% } %>
+                </table>
+            </div>
+            </div>
+        
+
+
+            <div class="col-sm-8" style="background-color: rgba(42, 42, 42, 0.8); padding: 0">
+                   
+                <div id="cesiumContainer" style="position:relative;width: 100%; height:100%; margin: 0; padding: 0; overflow: hidden; float: right">
+                        <div id="loadData"style="margin: auto; position: absolute; top: 5px;left: 5px;z-index:10;display:none">
+                                <br>
+                                <span>
+                                    <font face="arial" color="white">导入轨迹数据.json</font>
+                                </span>
+                                <br>
+                                <input name="trajFilePath" style="width: 180px; height: 30px; margin: 0 auto; background:rgba(42,42,42,0.8); padding: 4px" type="file"
+                                 ; id="trajFilePath" ; onchange="getFilePath(this)" />
+                                 <br>
+                            </div>
+                    <div id="chart"style="z-index:10"></div>
+                </div>
+               
+
+           
+           
+            </div>
+            
+       </div>
+    </div>
+    <!-- <div class="projectlist">
+            
+    </div> -->
+                  
+
+
+ 
+    <script src="/javascripts/changeview.js"></script>
+    <script src="/javascripts/loadPos_blh.js"></script> 
+    <script src="/javascripts/ImportCesium.js"></script>   
+    <script src="/javascripts/LoadDefault.js"></script>   
+    <script src="/javascripts/FlyControl.js"></script>
+    <script src="/javascripts/ChangeLayers.js"></script>
+    <script src="/javascripts/bufferAnalysis.js"></script>   
+    <script src="/javascripts/loadTraj.js"></script>
+    <script src="/javascripts/DrawHelper.js"></script>
+    <script src="/javascripts/DrawHelperstart.js"></script>
+    <script src="/javascripts/loadMultiCZML.js"></script>
+    <script src="/javascripts/showRes.js"></script>
+    <script src="/javascripts/readPopulation.js"></script>
+    <script src="/javascripts/d3height.js"></script>
+    <!-- <script src="/javascripts/GeoJsonArrayDataSource.js"></script> -->
+    
+    <script>
+    //getInfo.js内容
+     $(document).ready(function () {
+
+         $("#frombehind").click(function(){
+            var viewoption = "fromBehind";
+            var entity = viewer.trackedEntity;
+            changeview(entity, viewoption);
+         });
+         $("#frompilot").click(function(){
+            var viewoption = "pilotview";
+            var entity = viewer.trackedEntity;
+            changeview(entity, viewoption);
+         });
+         $("fromtop").click(function(){
+            var viewoption = "lookdown";
+            var entity = viewer.trackedEntity;
+            changeview(entity, viewoption);
+         });
+         $("initview").click(function(){
+            var viewoption = "none";
+            var entity = viewer.trackedEntity;
+            changeview(entity, viewoption);
+         });
+
+       
+     });
+
+        function checkresult(obj){
+            //获取被点击标签对象的属性的方法
+            var projectname =$(obj).prop('id');
+            var username=$(obj).attr('username');
+            var rasterresultpath="/project/"+username+"/"+projectname+"/population.json";
+            var vectorresultpath="/project/"+username+"/"+projectname;
+            var bufferdistance=$(obj).attr('bufferdistance');
+            var layers=$(obj).attr('layers');
+            //console.log(value);
+            var layersarr=new Array();
+            layersarr=layers.split(" ");
+            for(i=0;i<layersarr.length;i++){
+                showStoredvectorRes(layersarr[i],vectorresultpath);
+            }
+            console.log("1111");
+            console.log(username);
+          
+            
+            //console.log(vectorresultpath);
+            readInPopJson(rasterresultpath,bufferdistance);
+        }
+        
+        function removeall(){
+            viewer.entities.removeAll();
+            viewer.dataSources.removeAll();
+            location.reload(true);
+    
+            //viewer.dataSource.removeAll();
+        }
+        function drop1() {
+            viewer.entities.removeAll();
+        }
+        function drop11() {
+            createModel('/myCesium/Apps/SampleData/models/CesiumAir/Cesium_Air.glb', 30000000.0);
+        }
+
+        function drop12() {
+            createModel('/myCesium/Apps/SampleData/models/CesiumBalloon/CesiumBalloon.glb', 300000.0);
+        }
+        function chartShow(){
+            $("#loadData").css("display","block");
+        }
+       
+
+       
+    </script>
+    
+    
+
+    <script id="cesium_sandcastle_script">
+        function startup(Cesium) {
+            'use strict';
+            //Sandcastle_Begin
+
+            //定义页面需要更新的变量
+            var rtLon = document.getElementById('rtLon');
+            var rtLat = document.getElementById('rtLat');
+            var rthgt = document.getElementById('rthgt');
+            var totalDis = document.getElementById('totalDis');
+            // var coorDisplay = false;//是否随鼠标显示坐标
+        }
+        if (typeof Cesium !== "undefined") {
+            startup(Cesium);
+        } else if (typeof require === "function") {
+            require(["Cesium"], startup);
+        }
+    </script>
+
+</body>
+</html>

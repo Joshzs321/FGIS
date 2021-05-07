@@ -1,0 +1,4 @@
+\\.\pipe\7cb07f4b-2793-47e5-a11c-9f01d32ed89f
+[0mGET /img/dragIcon.png [36m304 [0m3.564 ms - -[0m
+[0mGET /img/dragIcon.png [36m304 [0m0.952 ms - -[0m
+[0mGET /img/dragIconLight.png [32m200 [0m2.786 ms - 464[0m

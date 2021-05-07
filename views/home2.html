@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title><%= title %></title>
+</head>
+<body>
+<table>
+    <tr>
+        <th>编号</th>
+        <th>工程名</th>
+        <th>缓冲距离</th>
+        <th>layers</th>
+    </tr>
+    <% for(var i = 0; i < datas.length; i++) {%>
+     
+<% if(datas[i].username==user.username) {%>
+	<tr>
+            <td><%= datas[i].id %></td>
+            <td><%= datas[i].projectname %></td>
+            <td><%= datas[i].bufferdistance %></td>
+            <td><%= datas[i].layers %></td>
+            <td><a href="/home2/del/<%= datas[i].id %>">删除</a></td>
+        </tr>
+
+<%}%>
+        
+    <% } %>
+</table>
+<button><a href="/HtmlPage1">返回</a></button>
+</body>
+</html>

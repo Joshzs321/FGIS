@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title><%= title %></title>
+</head>
+<body>
+<%= title %>
+<% if(user && user.username) {%>
+	<p><%= user.username %>您好, 欢迎来到 <%= title %></p>
+	<a href="/logout">退出</a>
+<%}else{ %>
+	<p>您还没有登录,请登录之后在操作</p>
+	<a href="/login">登录</a>
+	<a href="/register">注册</a>
+<%}%>
+</body>
+</html>

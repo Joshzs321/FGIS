@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "China_gis.osm_transport_free_1",
+"features": [
+{ "geometry": { "type": "Point", "coordinates": [ 113.8527836, 35.3064896 ] } },
+{ "geometry": { "type": "Point", "coordinates": [ 113.8997828, 35.3862612 ] } },
+{ "geometry": { "type": "Point", "coordinates": [ 114.0105968, 37.9918236 ] } },
+{ "geometry": { "type": "Point", "coordinates": [ 113.9304763, 37.9889717 ] } },
+{ "geometry": { "type": "Point", "coordinates": [ 113.8956289, 35.294832 ] } },
+{ "geometry": { "type": "Point", "coordinates": [ 113.97153, 39.32573 ] } }
+]
+}
