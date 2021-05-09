@@ -45,7 +45,7 @@ app.use(session({
   saveUninitialized : false
 }));
 
-app.use('/', index);
+app.use('/', HtmlPage1);
 
 app.use('/login', login);
 app.use('/register', register);

@@ -111,12 +111,13 @@ css rules for the infowindow
 }
 #logging {
     position: absolute;
-    bottom: 20px;
-    right: 0;
+    bottom: 24px;
+    right: 21px;
     display: inline;
     margin: 10px;
     padding: 10px;
     background: rgba(42,42,42,0.8);
+    z-index: 1000;
 }
 #pointsChart{
     background: rgba(42, 42, 42, 0.8);

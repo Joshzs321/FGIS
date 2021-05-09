@@ -187,7 +187,7 @@ body, html {
 
 .dropdown-menu li {
   text-align: center;
-  color: black;
+  color: rgb(214, 203, 203);
 }
 
 .sidebar-nav li a:hover, .sidebar-nav li a:active, .sidebar-nav li a:focus, .sidebar-nav li.open a:hover, .sidebar-nav li.open a:active, .sidebar-nav li.open a:focus {
@@ -380,20 +380,51 @@ body a:hover {
   display: none !important;
 }
 
+.navbar-nav {
+  display: flex;
+  justify-content: flex-end
+}
+
+.input-group {
+  margin: auto;
+  width: auto;
+}
+
+/* 自定义样式 */
+
 #no-fly-container {
   transition: background-color 0.3s ease 0s;
-  position: absolute;
-  transform: translate3d(-6px, 23px, 0px);
   top: -33px !important;
-  left: -50px !important;
-  will-change: transform
+  left: -62px !important;
 }
+
 .dropdown-menu li:hover {
-  background: rgb(141, 136, 136);
   cursor: pointer;
   text-decoration: none;
 }
 
-#shapeFilePathContainer{
+#shapeFilePathContainer {
   display: none;
+}
+
+.model-elector {
+  margin-top: 5px;
+}
+
+.no-fly-item {
+  color: black !important;
+}
+
+#eye-buttom {
+  position: absolute;
+  bottom: 30px;
+  right: 3px;
+  display: inline;
+  background: white;
+  z-index: 1000;
+}
+
+#eye-buttom:hover {
+  cursor: pointer;
+  background: rgba(42, 42, 42, 1)
 }

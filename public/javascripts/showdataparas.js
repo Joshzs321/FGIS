@@ -5,7 +5,6 @@ function getDataToShow(){
         // if($(this).attr("checked"))
         datatoshow[i]=$(this).val();
     });
-    console.log(datatoshow)
     return datatoshow;
 }
 

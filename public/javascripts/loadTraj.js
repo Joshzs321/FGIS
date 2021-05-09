@@ -13,27 +13,25 @@ var intervalTime2;
 var model_path = "/model/Cesium_Air.glb";
 var magnification_h = 1;
 var magnification_t = 5;
-
+var datasource;
 
 //var url = 'data/TrajData.json';
 var url;
-$('#radio_buttom input:radio[name="optionsRadios"]').change(function () {
-    //console.log($('#radio_buttom input:radio:checked').attr('value')) ;
-    model_path = $('#radio_buttom input:radio:checked').attr('value');
+$('#model-elector input:radio[name="optionsRadios"]').change(function () {
+    model_path = $('#model-elector input:radio:checked').attr('value');
 });
 var datatoshow;
 
 function getFilePath(d) {
-    console.log('d: ', d);
     hideLegend();
 
     // var fakePath = d.value;
     console.log(d.files);
-    var urlArr=[]
-    for (var i = 0; i < d.files.length; i++) { 
-        urlArr.push("/data/" +d.files[i].name)
+    var urlArr = []
+    for (var i = 0; i < d.files.length; i++) {
+        urlArr.push("/data/" + d.files[i].name)
     }
-    
+
     // var temp = fakePath.split("\\");
     // var fileName = temp[temp.length - 1];
     // url = "/data/" + fileName;
@@ -134,7 +132,7 @@ function sampleProperty(data) {
 }
 
 
-var datasource;
+
 
 function loadTra(urlArr) {
 
@@ -149,6 +147,26 @@ function loadTra(urlArr) {
 
 
 
+}
+
+
+function getModelPath(f) {
+    var fakePath = f.value;
+    var temp = fakePath.split("\\");
+    var fileName = temp[temp.length - 1];
+    var url = "/model/" + fileName;
+    $("input").filter(":radio").removeAttr("checked")
+    // model_path = null
+    $('input[type=text][name=path]')[0].value = fileName
+    $('input[type=text][name=path]')[0].style.display = 'block'
+    console.log(url);
+    if (url) {
+        model_path = url;
+        console.log('$ ', $('input[name="optionsRadios"]:checked'));
+    }
+    else {
+        alert('文件路径不对');
+    }
 }
 
 function createentity(datasource) {
@@ -184,7 +202,7 @@ function createentity(datasource) {
         //用四元量一维数据来定义姿态渲染会出错，暂时只能用上面的自动计算
         // orientation:orientation,
         model: {
-            uri: "/model/plane1.glb",
+            uri: model_path,
             minimumPixelSize: 64
         },
         path: {
@@ -228,16 +246,14 @@ function createentity(datasource) {
         viewer.clock.onTick.addEventListener(function (clock) {
             //显示高度曲线图表
             var datatoshow = getDataToShow();
-            // for (i = 0; i < datatoshow.length; i++) {
-            // viewHeight(datasource, datatoshow[i], i);
             viewHeight(datasource, datatoshow[0]);
+            console.log(model_path);
             var now = viewer.clock.currentTime;
-            var model = getModelToShow();
-            plane.model.uri = model;
-
-
+            if (model_path)
+                plane.model.uri = model_path
+            else
+                plane.model.uri = getModelToShow()
             paraDisplay(plane, now, datatoshow[0]);
-            // }
 
         });
         viewer.clock.shouldAnimate = true;

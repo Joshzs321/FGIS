@@ -1903,12 +1903,14 @@ var DrawHelper = (function () {
                     ui.setAttribute('style', '')
                     var li1 = document.createElement('li')
                     li1.id = 'Cylinder'
+                    li1.className="no-fly-item"
                     li1.textContent = '圆柱'
                     li1.setAttribute('data-toggle','modal');
                     li1.setAttribute('data-target','#myModal');
                     var li2 = document.createElement('li')
                     li2.id = 'Hemisphere'
                     li2.textContent = '半球'
+                    li2.className="no-fly-item"
                     li2.onclick=function(){
                         $('#Cylinder').val('')
                     }
